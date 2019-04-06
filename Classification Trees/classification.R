@@ -1,0 +1,21 @@
+setwd("F:/Data Science/MachineLearningBootcamp")
+library(caret)
+library(rpart.plot)
+db_data <- read.csv("diabetes.csv")
+head(db_data)
+str(db_data)
+db_data$Outcome <- as.factor(db_data$Outcome)
+any(is.na(db_data))
+summary(db_data)
+n <- nrow(db_data)
+n_train <- round(0.8*n)
+set.seed(123)
+train_indices <- sample(1:n, n_train)
+db_train <- db_data[train_indices,]
+db_test <- db_data[-train_indices,]
+db_model <- rpart(formula=Outcome~.,data=db_train, method = "class")
+print(db_model)
+rpart.plot(x=db_model,yesno = 2, type = 0, extra = 0)
+db_prediction <- predict(object = db_model, newdata = db_test, type = "class")
+confusionMatrix(data = db_prediction,       
+                reference = db_test$Outcome)
